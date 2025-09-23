@@ -9,7 +9,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api";
 import TransactionModal from "../../components/TransactionModal";
 import styles from "./style";
@@ -26,18 +26,18 @@ export default function Home({ route }) {
   // Carregar dados do usuário
   const loadUserData = async () => {
     try {
-      const response = await api.get('/user');
+      const response = await api.get("/user");
       if (response.status === 200) {
-        setUser(response.data);
-        setSaldo(response.data.saldo || 0);
+        const userData = response.data.user || response.data;
+        setUser(userData);
+        setSaldo(Number(userData.saldo) || 0);
       }
     } catch (error) {
-      console.error('Erro ao carregar dados do usuário:', error);
-      
+      console.error("Erro ao carregar dados do usuário:", error);
+
       if (error.response?.status === 401) {
-        // Token inválido, redirecionar para login
-        await AsyncStorage.removeItem('userToken');
-        navigation.replace('Login');
+        await AsyncStorage.removeItem("userToken");
+        navigation.replace("Login");
       }
     }
   };
@@ -45,26 +45,23 @@ export default function Home({ route }) {
   // Carregar transações
   const loadTransactions = async () => {
     try {
-      const response = await api.get('/transactions');
+      const response = await api.get("/transactions");
       if (response.status === 200) {
         setTransactions(response.data.transactions || []);
       }
     } catch (error) {
-      console.error('Erro ao carregar transações:', error);
+      console.error("Erro ao carregar transações:", error);
     }
   };
 
   // Carregar dados iniciais
   const loadData = async (showLoading = true) => {
     if (showLoading) setLoading(true);
-    
+
     try {
-      await Promise.all([
-        loadUserData(),
-        loadTransactions(),
-      ]);
+      await Promise.all([loadUserData(), loadTransactions()]);
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
+      console.error("Erro ao carregar dados:", error);
     } finally {
       if (showLoading) setLoading(false);
     }
@@ -80,23 +77,25 @@ export default function Home({ route }) {
   // Remover transação
   const handleRemoveTransaction = (transactionId) => {
     Alert.alert(
-      'Remover Transação',
-      'Tem certeza que deseja remover esta transação?',
+      "Remover Transação",
+      "Tem certeza que deseja remover esta transação?",
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: 'Remover',
-          style: 'destructive',
+          text: "Remover",
+          style: "destructive",
           onPress: async () => {
             try {
-              const response = await api.delete(`/transactions/${transactionId}`);
+              const response = await api.delete(
+                `/transactions/${transactionId}`
+              );
               if (response.status === 200) {
-                Alert.alert('Sucesso', 'Transação removida com sucesso!');
-                await loadData(false); // Recarregar dados
+                Alert.alert("Sucesso", "Transação removida com sucesso!");
+                await loadData(false);
               }
             } catch (error) {
-              console.error('Erro ao remover transação:', error);
-              Alert.alert('Erro', 'Não foi possível remover a transação.');
+              console.error("Erro ao remover transação:", error);
+              Alert.alert("Erro", "Não foi possível remover a transação.");
             }
           },
         },
@@ -106,24 +105,24 @@ export default function Home({ route }) {
 
   // Callback quando uma nova transação é criada
   const handleTransactionSuccess = () => {
-    loadData(false); // Recarregar dados sem loading
+    loadData(false);
   };
 
   // Formatar valor como moeda
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   // Formatar data
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   };
 
@@ -135,14 +134,15 @@ export default function Home({ route }) {
     >
       <View style={styles.transactionInfo}>
         <View style={styles.transactionHeader}>
-          <Text style={styles.transactionDescription}>{item.description}</Text>
+          <Text style={styles.transactionDescription}>{item.descricao}</Text>
           <Text
             style={[
               styles.transactionAmount,
-              item.type === 'entrada' ? styles.entrada : styles.saida,
+              item.tipo === "entrada" ? styles.entrada : styles.saida,
             ]}
           >
-            {item.type === 'entrada' ? '+' : '-'} {formatCurrency(item.amount)}
+            {item.tipo === "entrada" ? "+" : "-"}{" "}
+            {formatCurrency(Number(item.valor))}
           </Text>
         </View>
         <Text style={styles.transactionDate}>
@@ -174,13 +174,13 @@ export default function Home({ route }) {
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>
-            Olá, {user?.name?.split(' ')[0] || 'Usuário'}!
+            Olá, {user?.name?.split(" ")[0] || "Usuário"}!
           </Text>
           <Text style={styles.subtitle}>Bem-vindo ao Banco Inter</Text>
         </View>
         <Pressable
           style={styles.profileButton}
-          onPress={() => navigation.navigate('Perfil')}
+          onPress={() => navigation.navigate("Perfil")}
         >
           <Text style={styles.profileButtonText}>Perfil</Text>
         </Pressable>
@@ -195,7 +195,7 @@ export default function Home({ route }) {
       {/* Lista de Transações */}
       <View style={styles.transactionsContainer}>
         <Text style={styles.transactionsTitle}>Transações Recentes</Text>
-        
+
         {transactions.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>Nenhuma transação encontrada</Text>
@@ -213,7 +213,7 @@ export default function Home({ route }) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                colors={['#FF7A00']}
+                colors={["#FF7A00"]}
                 tintColor="#FF7A00"
               />
             }
@@ -222,10 +222,7 @@ export default function Home({ route }) {
       </View>
 
       {/* FAB - Floating Action Button */}
-      <Pressable
-        style={styles.fab}
-        onPress={() => setModalVisible(true)}
-      >
+      <Pressable style={styles.fab} onPress={() => setModalVisible(true)}>
         <Text style={styles.fabText}>+</Text>
       </Pressable>
 
@@ -238,4 +235,3 @@ export default function Home({ route }) {
     </View>
   );
 }
-
