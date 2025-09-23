@@ -268,7 +268,7 @@ export default function Perfil() {
 
       {/* Botão de Logout */}
       <View style={styles.logoutContainer}>
-        <Pressable style={styles.logoutButton} onPress={handleLogout}>
+        <Pressable style={styles.logoutButton} onPress={() => navigation.navigate("Login")}>
           <Text style={styles.logoutButtonText}>Sair da Conta</Text>
         </Pressable>
       </View>

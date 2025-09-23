@@ -63,16 +63,15 @@ export default function Cadastro() {
       });
 
       if (response.status === 201) {
-        Alert.alert(
-          "Sucesso", 
-          "Conta criada com sucesso! Faça login para continuar.",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.navigate("Login")
-            }
-          ]
-        );
+        Alert.alert("Sucesso", "Conta criada com sucesso! Faça login para continuar.");
+
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Login" }],
+          });
+        }, 500);
+        
       }
     } catch (error) {
       console.error('Erro no cadastro:', error.response?.data || error);
