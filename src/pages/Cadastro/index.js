@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert, ActivityIndicator, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../api";
 import styles from "./style";
@@ -63,7 +71,10 @@ export default function Cadastro() {
       });
 
       if (response.status === 201) {
-        Alert.alert("Sucesso", "Conta criada com sucesso! Faça login para continuar.");
+        Alert.alert(
+          "Sucesso",
+          "Conta criada com sucesso! Faça login para continuar."
+        );
 
         setTimeout(() => {
           navigation.reset({
@@ -71,13 +82,12 @@ export default function Cadastro() {
             routes: [{ name: "Login" }],
           });
         }, 500);
-        
       }
     } catch (error) {
-      console.error('Erro no cadastro:', error.response?.data || error);
-      
+      console.error("Erro no cadastro:", error.response?.data || error);
+
       let errorMessage = "Erro ao criar conta. Tente novamente.";
-      
+
       if (error.response?.status === 422) {
         // Erro de validação
         const errors = error.response.data.errors;
@@ -89,7 +99,7 @@ export default function Cadastro() {
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-      
+
       Alert.alert("Erro", errorMessage);
     } finally {
       setLoading(false);
@@ -139,8 +149,8 @@ export default function Cadastro() {
         editable={!loading}
       />
 
-      <Pressable 
-        style={[styles.button, loading && styles.buttonDisabled]} 
+      <Pressable
+        style={[styles.button, loading && styles.buttonDisabled]}
         onPress={handleCadastro}
         disabled={loading}
       >
@@ -151,13 +161,9 @@ export default function Cadastro() {
         )}
       </Pressable>
 
-      <Pressable 
-        onPress={() => navigation.goBack()}
-        disabled={loading}
-      >
+      <Pressable onPress={() => navigation.goBack()} disabled={loading}>
         <Text style={styles.backLink}>Já tenho uma conta</Text>
       </Pressable>
     </ScrollView>
   );
 }
-

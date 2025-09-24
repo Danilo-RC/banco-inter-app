@@ -1,14 +1,14 @@
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Configuração da API para XAMPP
 const api = axios.create({
-  // XAMPP geralmente roda na porta 80, mas o Laravel Artisan serve na 8000
-  baseURL: 'http://localhost:8000/api',
+  // XAMPP geralmente o Laravel Artisan serve roda na porta 8000
+  baseURL: "http://localhost:8000/api",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
@@ -16,12 +16,12 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      const token = await AsyncStorage.getItem('userToken');
+      const token = await AsyncStorage.getItem("userToken");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      console.error('Erro ao obter token:', error);
+      console.error("Erro ao obter token:", error);
     }
     return config;
   },
@@ -30,7 +30,7 @@ api.interceptors.request.use(
   }
 );
 
-// Interceptor para tratar respostas
+// Interceptor para tratar as respostas e ele funciona para logout automático se o token expirar
 api.interceptors.response.use(
   (response) => {
     return response;
@@ -39,24 +39,22 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expirado ou inválido
       try {
-        await AsyncStorage.removeItem('userToken');
-        // Aqui você pode redirecionar para login se necessário
-        console.log('Token removido - usuário deslogado');
+        await AsyncStorage.removeItem("userToken");
+        console.log("Token removido - usuário deslogado");
       } catch (e) {
-        console.error('Erro ao remover token:', e);
+        console.error("Erro ao remover token:", e);
       }
     }
-    
+
     // Log detalhado para debug
-    console.error('Erro na API:', {
+    console.error("Erro na API:", {
       status: error.response?.status,
       data: error.response?.data,
-      message: error.message
+      message: error.message,
     });
-    
+
     return Promise.reject(error);
   }
 );
 
 export default api;
-

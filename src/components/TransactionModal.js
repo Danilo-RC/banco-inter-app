@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Modal,
   View,
@@ -8,19 +8,19 @@ import {
   Alert,
   ActivityIndicator,
   StyleSheet,
-} from 'react-native';
-import api from '../api';
+} from "react-native";
+import api from "../api";
 
 export default function TransactionModal({ visible, onClose, onSuccess }) {
-  const [tipo, setTipo] = useState(''); // 'entrada' ou 'saida'
-  const [valor, setValor] = useState('');
-  const [descricao, setDescricao] = useState('');
+  const [tipo, setTipo] = useState(""); // 'entrada' ou 'saida'
+  const [valor, setValor] = useState("");
+  const [descricao, setDescricao] = useState("");
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setTipo('');
-    setValor('');
-    setDescricao('');
+    setTipo("");
+    setValor("");
+    setDescricao("");
   };
 
   const handleClose = () => {
@@ -29,77 +29,61 @@ export default function TransactionModal({ visible, onClose, onSuccess }) {
   };
 
   const formatarValor = (text) => {
-    // Remove tudo que não é número
-    const numeros = text.replace(/[^0-9]/g, '');
-    
-    if (numeros === '') return '';
-    
-    // Converte para número e divide por 100 para ter centavos
+    const numeros = text.replace(/[^0-9]/g, "");
+    if (numeros === "") return "";
     const valor = parseInt(numeros) / 100;
-    
-    // Formata como moeda brasileira
-    return valor.toLocaleString('pt-BR', {
+    return valor.toLocaleString("pt-BR", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
   };
 
   const handleValorChange = (text) => {
-    const valorFormatado = formatarValor(text);
-    setValor(valorFormatado);
+    setValor(formatarValor(text));
   };
 
   const validarCampos = () => {
     if (!tipo) {
-      Alert.alert('Erro', 'Selecione o tipo da transação.');
+      Alert.alert("Erro", "Selecione o tipo da transação.");
       return false;
     }
-
-    if (!valor || valor === '0,00') {
-      Alert.alert('Erro', 'Digite um valor válido.');
+    if (!valor || valor === "0,00") {
+      Alert.alert("Erro", "Digite um valor válido.");
       return false;
     }
-
     if (!descricao.trim()) {
-      Alert.alert('Erro', 'Digite uma descrição para a transação.');
+      Alert.alert("Erro", "Digite uma descrição para a transação.");
       return false;
     }
-
     return true;
   };
 
   const handleSubmit = async () => {
-    if (!validarCampos()) {
-      return;
-    }
+    if (!validarCampos()) return;
 
     setLoading(true);
-
     try {
-      // Converte o valor formatado de volta para número
-      const valorNumerico = parseFloat(valor.replace(/\./g, '').replace(',', '.'));
-
-      const response = await api.post('/transactions', {
+      const valorNumerico = parseFloat(
+        valor.replace(/\./g, "").replace(",", ".")
+      );
+      const response = await api.post("/transactions", {
         type: tipo,
         amount: valorNumerico,
         description: descricao.trim(),
       });
 
       if (response.status === 201) {
-        Alert.alert('Sucesso', 'Transação criada com sucesso!');
-        onSuccess(); // Callback para recarregar as transações
+        Alert.alert("Sucesso", "Transação criada com sucesso!");
+        onSuccess();
         handleClose();
       }
     } catch (error) {
-      console.error('Erro ao criar transação:', error.response?.data || error);
-      
-      let errorMessage = 'Erro ao criar transação. Tente novamente.';
-      
+      console.error("Erro ao criar transação:", error.response?.data || error);
+      let errorMessage = "Erro ao criar transação. Tente novamente.";
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-      
-      Alert.alert('Erro', errorMessage);
+      Alert.alert("Erro", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -123,16 +107,15 @@ export default function TransactionModal({ visible, onClose, onSuccess }) {
             <Pressable
               style={[
                 styles.typeButton,
-                tipo === 'entrada' && styles.typeButtonSelected,
-                styles.typeButtonEntrada,
+                tipo === "entrada" && { backgroundColor: "#28a745" },
               ]}
-              onPress={() => setTipo('entrada')}
+              onPress={() => setTipo("entrada")}
               disabled={loading}
             >
               <Text
                 style={[
                   styles.typeButtonText,
-                  tipo === 'entrada' && styles.typeButtonTextSelected,
+                  tipo === "entrada" && { color: "#fff" },
                 ]}
               >
                 ↑ Entrada
@@ -142,16 +125,15 @@ export default function TransactionModal({ visible, onClose, onSuccess }) {
             <Pressable
               style={[
                 styles.typeButton,
-                tipo === 'saida' && styles.typeButtonSelected,
-                styles.typeButtonSaida,
+                tipo === "saida" && { backgroundColor: "#dc3545" },
               ]}
-              onPress={() => setTipo('saida')}
+              onPress={() => setTipo("saida")}
               disabled={loading}
             >
               <Text
                 style={[
                   styles.typeButtonText,
-                  tipo === 'saida' && styles.typeButtonTextSelected,
+                  tipo === "saida" && { color: "#fff" },
                 ]}
               >
                 ↓ Saída
@@ -200,7 +182,11 @@ export default function TransactionModal({ visible, onClose, onSuccess }) {
             </Pressable>
 
             <Pressable
-              style={[styles.button, styles.submitButton, loading && styles.buttonDisabled]}
+              style={[
+                styles.button,
+                styles.submitButton,
+                loading && styles.buttonDisabled,
+              ]}
               onPress={handleSubmit}
               disabled={loading}
             >
@@ -220,27 +206,27 @@ export default function TransactionModal({ visible, onClose, onSuccess }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   modal: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 15,
     padding: 20,
-    width: '100%',
+    width: "100%",
     maxWidth: 400,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
     marginBottom: 20,
   },
   typeContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 20,
     gap: 10,
   },
@@ -249,67 +235,55 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#ddd',
-    alignItems: 'center',
-  },
-  typeButtonSelected: {
-    borderWidth: 2,
-  },
-  typeButtonEntrada: {
-    borderColor: '#28a745',
-  },
-  typeButtonSaida: {
-    borderColor: '#dc3545',
+    borderColor: "#ddd",
+    alignItems: "center",
   },
   typeButtonText: {
     fontSize: 16,
-    color: '#666',
-    fontWeight: 'bold',
-  },
-  typeButtonTextSelected: {
-    color: '#333',
+    color: "#666",
+    fontWeight: "bold",
   },
   inputContainer: {
     marginBottom: 15,
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 5,
   },
   valorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
     paddingHorizontal: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   moedaSymbol: {
     fontSize: 18,
-    color: '#333',
+    color: "#333",
     marginRight: 10,
   },
   valorInput: {
     flex: 1,
     height: 50,
     fontSize: 18,
-    color: '#333',
+    color: "#333",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
-    backgroundColor: '#fff',
-    textAlignVertical: 'top',
+    backgroundColor: "#fff",
+    textAlignVertical: "top",
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 20,
     gap: 10,
   },
@@ -317,29 +291,28 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
   },
   cancelButtonText: {
-    color: '#666',
+    color: "#666",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   submitButton: {
-    backgroundColor: '#FF7A00',
+    backgroundColor: "#FF7A00",
   },
   submitButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   buttonDisabled: {
-    backgroundColor: '#FFB366',
+    backgroundColor: "#FFB366",
   },
 });
-

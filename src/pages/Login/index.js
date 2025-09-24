@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api";
 import styles from "./style";
 
@@ -26,27 +33,27 @@ export default function Login() {
       });
 
       if (response.status === 200) {
-        // Salvar token no AsyncStorage
-        await AsyncStorage.setItem('userToken', response.data.token);
-        
+        // Salva o token no AsyncStorage
+        await AsyncStorage.setItem("userToken", response.data.token);
+
         Alert.alert("Sucesso", "Login realizado com sucesso!");
-        
-        // Navegar para Home com dados do usuário
-        navigation.replace("Home", { 
-          user: response.data.user 
+
+        // Navega para Home com dados do usuário
+        navigation.replace("Home", {
+          user: response.data.user,
         });
       }
     } catch (error) {
-      console.error('Erro no login:', error.response?.data || error);
-      
+      console.error("Erro no login:", error.response?.data || error);
+
       let errorMessage = "Erro no login. Tente novamente.";
-      
+
       if (error.response?.status === 401) {
         errorMessage = "Email ou senha incorretos.";
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-      
+
       Alert.alert("Erro", errorMessage);
     } finally {
       setLoading(false);
@@ -78,8 +85,8 @@ export default function Login() {
         editable={!loading}
       />
 
-      <Pressable 
-        style={[styles.button, loading && styles.buttonDisabled]} 
+      <Pressable
+        style={[styles.button, loading && styles.buttonDisabled]}
         onPress={handleLogin}
         disabled={loading}
       >
@@ -90,7 +97,7 @@ export default function Login() {
         )}
       </Pressable>
 
-      <Pressable 
+      <Pressable
         onPress={() => navigation.navigate("Cadastro")}
         disabled={loading}
       >
@@ -99,4 +106,3 @@ export default function Login() {
     </View>
   );
 }
-

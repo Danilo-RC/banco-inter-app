@@ -21,7 +21,7 @@ export default function Perfil() {
   const [loading, setLoading] = useState(true);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-  // Carregar dados do usuário
+  // Carrega os dados do usuário
   const loadUserData = async () => {
     try {
       const response = await api.get("/user");
@@ -43,7 +43,7 @@ export default function Perfil() {
     }
   };
 
-  // Pedir permissões
+  // Pedir as permissões
   const requestPermissions = async () => {
     if (Platform.OS === "web") return true; // web não precisa de permissão
 
@@ -60,7 +60,7 @@ export default function Perfil() {
     return true;
   };
 
-  // Tirar foto
+  // Tirar a foto
   const takePhoto = async () => {
     if (Platform.OS === "web") {
       Alert.alert("Indisponível", "Câmera não funciona na web.");
@@ -113,13 +113,13 @@ export default function Perfil() {
     }
   };
 
-  // Upload da foto
+  // Upload das foto
   const uploadPhoto = async (uri) => {
     setUploadingPhoto(true);
     try {
       const formData = new FormData();
 
-      // Para web, precisa transformar em File
+      // Para web, precisa transformar em File mó chato isso
       if (Platform.OS === "web") {
         const response = await fetch(uri);
         const blob = await response.blob();
@@ -171,7 +171,7 @@ export default function Perfil() {
     ]);
   };
 
-  // Formatar valor como moeda
+  // Formata o valor como moeda
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -248,7 +248,7 @@ export default function Perfil() {
         )}
       </View>
 
-      {/* Informações do Usuário */}
+      {/* Informações do Usuário: Nome, Email e Saldo */}
       <View style={styles.infoContainer}>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Nome:</Text>
@@ -268,7 +268,10 @@ export default function Perfil() {
 
       {/* Botão de Logout */}
       <View style={styles.logoutContainer}>
-        <Pressable style={styles.logoutButton} onPress={() => navigation.navigate("Login")}>
+        <Pressable
+          style={styles.logoutButton}
+          onPress={() => navigation.navigate("Login")}
+        >
           <Text style={styles.logoutButtonText}>Sair da Conta</Text>
         </Pressable>
       </View>

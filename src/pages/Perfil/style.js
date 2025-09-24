@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   placeholder: {
-    width: 60, // Para balancear o layout
+    width: 60, // Para balancear o layout daquele jeito
   },
   photoContainer: {
     alignItems: "center",
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginTop: 15,
-    gap: 10, // espaçamento entre os botões (funciona no RN 0.71+)
+    gap: 10, // espaçamento entre os botões (funciona no RN 0.71+) tlgd?
   },
   changePhotoButton: {
     backgroundColor: "#FF7A00",

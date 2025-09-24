@@ -42,7 +42,7 @@ export default function Home({ route }) {
     }
   };
 
-  // Carregar transações
+  // Aqui carrega transações
   const loadTransactions = async () => {
     try {
       const response = await api.get("/transactions");
@@ -54,7 +54,7 @@ export default function Home({ route }) {
     }
   };
 
-  // Carregar dados iniciais
+  // aqui carrega dados iniciais
   const loadData = async (showLoading = true) => {
     if (showLoading) setLoading(true);
 
@@ -108,7 +108,7 @@ export default function Home({ route }) {
     loadData(false);
   };
 
-  // Formatar valor como moeda
+  // Formata o valor como moeda
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -116,7 +116,7 @@ export default function Home({ route }) {
     }).format(value);
   };
 
-  // Formatar data
+  // Formata a data
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR", {
@@ -126,7 +126,7 @@ export default function Home({ route }) {
     });
   };
 
-  // Renderizar item da transação
+  // Renderiza o item da transação
   const renderTransaction = ({ item }) => (
     <Pressable
       style={styles.transactionItem}
@@ -152,7 +152,7 @@ export default function Home({ route }) {
     </Pressable>
   );
 
-  // Carregar dados quando a tela ganha foco
+  // Carrega os dados quando a tela ganha foco
   useFocusEffect(
     useCallback(() => {
       loadData();
